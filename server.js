@@ -9,6 +9,10 @@ connectDb();
 import bootCamps from "./routes/bootcamps.js";
 const app = express();
 
+// body parser
+
+app.use(express.json());
+
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
@@ -20,4 +24,8 @@ const server = app.listen(process.env.PORT || 5000, () => {
     `Server running ${process.env.NODE_ENV} mode a port ${process.env.PORT}`
       .yellow.bold
   );
+});
+
+server.on("error", (err) => {
+  process.exit(1);
 });
