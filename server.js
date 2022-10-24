@@ -7,6 +7,7 @@ config({ path: "./config/config.env" });
 connectDb();
 
 import bootCamps from "./routes/bootcamps.js";
+import errorHandler from "./middleware/error.js";
 const app = express();
 
 // body parser
@@ -18,6 +19,8 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use("/api/v1/bootcamps", bootCamps);
+
+app.use(errorHandler);
 
 const server = app.listen(process.env.PORT || 5000, () => {
   console.log(

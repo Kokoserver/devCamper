@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
+import geocoder from "../utils/geocoder.js";
 const BootcampSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -96,5 +98,31 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+// generate slug
+BootcampSchema.pre("save", function (next) {
+  if (this.isNew) {
+    this.slug = slugify(this.name, {
+      lower: true,
+      strict: true,
+    });
+  }
+  next();
+});
 
+// generate location
+BootcampSchema.pre("save", async function (next) {
+  const location = await geocoder.geocode(this.address);
+  const location_data = location[0];
+  this.location = {
+    type: "Point",
+    coordinates: [location_data.longitude, location_data.latitude],
+    city: location_data.city,
+    state: location_data.stateCode,
+    street: location_data.streetName,
+    zipcode: location_data.zipcode,
+    country: location_data.countryCode,
+  };
+  this.address = undefined;
+  next();
+});
 export default mongoose.model("Bootcamp", BootcampSchema);
