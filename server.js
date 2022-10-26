@@ -11,7 +11,6 @@ import errorHandler from "./middleware/error.js";
 const app = express();
 
 // body parser
-
 app.use(express.json());
 
 if (process.env.NODE_ENV !== "production") {
