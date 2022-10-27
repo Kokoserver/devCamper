@@ -48,7 +48,7 @@ export const getCourse = asyncHandler(async (req, res, next) => {
 // @access private
 export const createCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
-  let bootcamp = Bootcamp.findById(req.params.bootcampId);
+  let bootcamp = await Bootcamp.findById(req.params.bootcampId);
   if (!bootcamp) {
     return next(
       new ErrorResponse(
@@ -88,11 +88,11 @@ export const updateCourse = asyncHandler(async (req, res, next) => {
 export const deleteCourse = asyncHandler(async (req, res, next) => {
   const course = await Course.findById(req.params.id);
 
-  //   if (!course) {
-  //     return next(
-  //       new ErrorResponse(`course with id ${req.params.id} is not found`, 404)
-  //     );
-  //   }
-  //   await course.remove();
-  //   return res.status(200).json({ success: true, data: course });
+  if (!course) {
+    return next(
+      new ErrorResponse(`course with id ${req.params.id} is not found`, 404)
+    );
+  }
+  await course.remove();
+  return res.status(200).json({ success: true, data: course });
 });
