@@ -37,10 +37,9 @@ export const getBootCamps = asyncHandler(async (req, res, next) => {
   const total = await Bootcamp.countDocuments();
   query = query.skip(startIndex).limit(limit);
 
-  const bootcamps = await query;
+  const bootcamps = await query.populate("courses");
   const pagination = {};
   if (endIndex < total) {
-    console.log("i enter here...");
     pagination["next"] = {
       page: page + 1,
       limit,
@@ -130,11 +129,12 @@ export const updateBootCamp = asyncHandler(async (req, res, next) => {
 // @method DELETE
 // @access private
 export const deleteBootCamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`bootcamp with id ${req.params.id} is not found`, 404)
     );
   }
+  await bootcamp.remove();
   return res.status(200).json({ success: true, data: bootcamp });
 });

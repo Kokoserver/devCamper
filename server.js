@@ -4,9 +4,9 @@ import morgan from "morgan";
 import colors from "colors";
 import { connectDb } from "./config/db.js";
 config({ path: "./config/config.env" });
-connectDb();
 
 import bootCamps from "./routes/bootcamps.js";
+import courses from "./routes/courses.js";
 import errorHandler from "./middleware/error.js";
 const app = express();
 
@@ -18,10 +18,12 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use("/api/v1/bootcamps", bootCamps);
+app.use("/api/v1/courses", courses);
 
 app.use(errorHandler);
 
 const server = app.listen(process.env.PORT || 5000, () => {
+  connectDb();
   console.log(
     `Server running ${process.env.NODE_ENV} mode a port ${process.env.PORT}`
       .yellow.bold
