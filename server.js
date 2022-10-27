@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
+import fileUpload from "express-fileupload";
 import colors from "colors";
 import { connectDb } from "./config/db.js";
 config({ path: "./config/config.env" });
@@ -9,6 +10,9 @@ import bootCamps from "./routes/bootcamps.js";
 import courses from "./routes/courses.js";
 import errorHandler from "./middleware/error.js";
 const app = express();
+
+// file upload
+app.use(fileUpload());
 
 // body parser
 app.use(express.json());

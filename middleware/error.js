@@ -1,6 +1,5 @@
 import ErrorResponse from "../utils/ErrorResponse.js";
 export default (err, req, res, next) => {
-  console.log(err.name);
   let error = { ...err };
   error.message = err.message;
   // mongoose validation error
@@ -10,7 +9,7 @@ export default (err, req, res, next) => {
       name: errorNames[index],
       message: val.message,
     }));
-    res.status(400).json({ success: false, message });
+    res.status(400).json({ success: false, detail: message });
   }
   if (err.code === 11000) {
     //   mongoose duplicate value error
@@ -24,5 +23,5 @@ export default (err, req, res, next) => {
   }
   res
     .status(error.statusCode || 500)
-    .json({ success: false, message: error.message || "Server error" });
+    .json({ success: false, detail: error.message || "Server error" });
 };
