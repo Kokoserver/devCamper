@@ -1,13 +1,33 @@
-import { config } from "dotenv";
-config({ path: "../config/config.env" });
-import mongoose from "mongoose";
-import { createBooCampSeeder, DeleteBooCampSeeder } from "./bootcamp.js";
+import seeder from "./_seederMap.js";
 
-Promise.resolve(mongoose.connect(process.env.MONGO_URI)).catch((err) =>
-  console.log(err.message)
-);
-if (process.argv[2] === "-clearBootcamp") {
-  Promise.resolve(DeleteBooCampSeeder());
-} else if (process.argv[2] === "-uploadBootcamp") {
-  Promise.resolve(createBooCampSeeder());
+const action = process.argv[2] || null;
+const target = process.argv[3] || null;
+const targetList = Object.keys(seeder);
+const action_list = ["--clear", "--upload", "-c", "-u"];
+const errorMessage = `
+    This command is expecting arguments:
+    Action: (-clear or -upload),
+    Target:  _seederMap.key which is the given in _seederMap.js";
+    complete example usage: node -clear bootcamp
+    `.red;
+
+const check_action = (target) => {
+  if (targetList.includes(target)) {
+    return true;
+  }
+  return false;
+};
+
+if (action_list.includes(action)) {
+  if (["-c", "--clear"].includes(action) && check_action(target)) {
+    Promise.resolve(seeder[target].deleteSeeds());
+  } else if (["-u", "--upload"].includes(action) && check_action(target)) {
+    Promise.resolve(seeder[target].createSeeds());
+  } else {
+    throw new Error(
+      `${target}  is not found in _seederMap.js please check and try again`.red
+    );
+  }
+} else {
+  throw new Error(errorMessage);
 }
