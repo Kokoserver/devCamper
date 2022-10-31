@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
@@ -13,6 +14,10 @@ const app = express();
 
 // file upload
 app.use(fileUpload());
+
+
+// set static path
+app.use(express.static(path.join(path.resolve(), "public")));
 
 // body parser
 app.use(express.json());
