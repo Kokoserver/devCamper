@@ -8,64 +8,14 @@ import geocoder from "../utils/geocoder.js";
 // @route api/v1/bootcamps
 // @method GET
 // @access public
-
 export const getBootCamps = asyncHandler(async (req, res, next) => {
-  let query;
-  let queryStr = { ...req.query };
-  const removeQuery = ["select", "limit", "sort", "page"];
-  removeQuery.forEach((param) => delete queryStr[param]);
-  queryStr = JSON.stringify(queryStr);
-  queryStr = queryStr.replace(
-    /\b(gt|gte|lte|lt|in)\b/g,
-    (match) => `$${match}`
-  );
-  query = Bootcamp.find(JSON.parse(queryStr));
-  if (req.query.select) {
-    const fields = req.query.select.split(",").join(" ");
-    query = query.select(fields);
-  }
-  if (req.query.sort) {
-    const sort = req.query.sort.split(",").join(" ");
-    query = query.sort(sort);
-  } else {
-    query.sort("-createdAt");
-  }
-
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 25;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  const total = await Bootcamp.countDocuments();
-  query = query.skip(startIndex).limit(limit);
-
-  const bootcamps = await query.populate("courses");
-  const pagination = {};
-  if (endIndex < total) {
-    pagination["next"] = {
-      page: page + 1,
-      limit,
-    };
-  }
-  if (startIndex > 0) {
-    pagination["prev"] = {
-      page: page - 1,
-      limit,
-    };
-  }
-
-  return res.status(200).json({
-    success: true,
-    count: bootcamps.length,
-    pagination,
-    data: bootcamps,
-  });
+  return res.status(200).json(res.advanceResult);
 });
 
 // @desc get all bootcamps by distance
 // @route api/v1/bootcamps/radius/:zipcode/distance
 // @method GET
 // @access public
-
 export const getBootCampByLocation = asyncHandler(async (req, res, next) => {
   const { zipcode, distance } = req.params;
   // get geocoder location

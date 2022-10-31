@@ -144,4 +144,5 @@ BootcampSchema.virtual("courses", {
   justOne: false,
   localField: "_id",
 });
-export default mongoose.model("Bootcamp", BootcampSchema);
+const Bootcamp = mongoose.model("Bootcamp", BootcampSchema);
+export default Bootcamp;

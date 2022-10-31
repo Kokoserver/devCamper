@@ -18,7 +18,7 @@ export default (err, req, res, next) => {
   }
   if (err.name === "CastError" || err.path === "_id" || err.kind === "Object") {
     //   Mongooses invalid id
-    const message = `Resource with id ${err.value} not found`;
+    const message = `Resource not found`;
     error = new ErrorResponse(message, 404);
   }
   res
