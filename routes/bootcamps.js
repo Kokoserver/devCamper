@@ -1,7 +1,8 @@
 import express from "express";
 import advanceResult from "../middleware/advanceResult.js";
 import Bootcamp from "../model/Bootcamp.js";
-
+import protectedRoute from "../middleware/auth.js";
+import permission from "../middleware/role.js";
 import {
   createBootCamps,
   getBootCamp,
@@ -19,12 +20,14 @@ router.route("/radius/:zipcode/:distance").get(getBootCampByLocation);
 router
   .route("/")
   .get(advanceResult(Bootcamp, "courses"), getBootCamps)
-  .post(createBootCamps);
-router.route("/:id/photo").put(uploadImageBootCamp);
+  .post(...[protectedRoute, permission("publisher"), createBootCamps]);
+router
+  .route("/:id/photo")
+  .put(...[protectedRoute, permission("publisher"), uploadImageBootCamp]);
 router
   .route("/:id")
   .get(getBootCamp)
-  .put(updateBootCamp)
-  .delete(deleteBootCamp);
+  .put(...[protectedRoute, permission("publisher"), updateBootCamp])
+  .delete(...[protectedRoute, permission("publisher"), deleteBootCamp]);
 
 export default router;

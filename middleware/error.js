@@ -13,7 +13,9 @@ export default (err, req, res, next) => {
   }
   if (err.code === 11000) {
     //   mongoose duplicate value error
-    const message = `Resource with field value '${err.keyValue.name}' already exists`;
+    const message = `Resource with field value '${
+      err.keyValue.name ?? err.keyValue[Object.keys(err.keyValue)]
+    }' already exists`;
     error = new ErrorResponse(message, 409);
   }
   if (err.name === "CastError" || err.path === "_id" || err.kind === "Object") {
